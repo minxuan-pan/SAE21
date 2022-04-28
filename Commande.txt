@@ -1,9 +1,11 @@
+# Voici les commandes que j'ai utilisé pour configurer la partie virtuelle sur le gns3.
 Router:
 	ip:
 	interface FastEthernet0/0
 	# pour l'interface qui est connecté au réseau externe, je l'ai mis en mode dhcp pour récupérer l'addresse automatiquement.
  	ip address dhcp
- 	# pour que les machines qui sont dans le réseau interne peuvent aller à l'internet, il faut déclarer le NAT . Donc ici,  je déclare que cette interface est l'interface qui ver dehors.
+ 	# pour que les machines qui sont dans le réseau interne peuvent aller à l'internet, il faut déclarer le NAT . Donc ici,  je déclare que cette interface est 
+	l'interface qui ver dehors.
  	ip nat outside
 	no shut
 	# Après, ce sont les config pour chaque vlan. (Administratifs : vlan1, Commerciaux : vlan2, SI : vlan3, serveur web : vlan4)
@@ -33,7 +35,8 @@ Router:
 	no shut
 	
 	dhcp:
-	# Activer le service dhcp dans le routeur. Comme il y en a plusieurs vlans, j'ai créé un "pool" pour chaque vlan. Mais, je n'ai pas créé celui de vlan4 parce que je voudrais mettre l'addresse du serveur web en static. 
+	# Activer le service dhcp dans le routeur. Comme il y en a plusieurs vlans, j'ai créé un "pool" pour chaque vlan. Mais, je n'ai pas créé celui de vlan4 parce 
+	que je voudrais mettre l'addresse du serveur web en static. 
 	service dhcp
 	ip dhcp pool vlan1
 	network 192.168.1.0 255.255.255.0
@@ -55,7 +58,9 @@ Router:
 	access-list 1 permit 192.168.2.0 0.0.0.255
 	access-list 1 permit 192.168.3.0 0.0.0.255
 	
-	#Après ce sont les regles pour les vlans. Pour que les mashines de SI peuvent joindre tous les machines, j'ai ajouté les "reflect" après les regles de vlan3 et ajouté un "evaluate SIback" dans les regles d'autre vlans(attention, "evaluate" doit être mis au début de la liste pour qu'il ait la priorité). Donc quand vlan3 essaie de joindre les autre vlans, il va réléter temporellement un regle à la liste de vlan destiné. 
+	#Après ce sont les regles pour les vlans. Pour que les mashines de SI peuvent joindre tous les machines, j'ai ajouté les "reflect" après les regles de vlan3 et 
+	ajouté un "evaluate SIback" dans les regles d'autre vlans(attention, "evaluate" doit être mis au début de la liste pour qu'il ait la priorité). Donc quand 
+	vlan3 essaie de joindre les autre vlans, il va réléter temporellement un regle à la liste de vlan destiné. 
 
 	ip access-list extended net1n
  	evaluate SIback 
@@ -75,12 +80,8 @@ Router:
  	permit ip any 192.168.2.0 0.0.0.255 reflect SIback timeout 30
  	permit ip any any
 
-	PC:
-	
-	nano /etc/resolv.conf
-		nameserver 10.255.255.200
-	apt-get update --allow-releaseinfo-change
-	apt-get install ssh
+PC:
+	# Comme les dockers dans le gns3 ne sauvegarde pas des configs, il faut installer un VM de Qemu.
 	
 
 	
